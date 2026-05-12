@@ -6,7 +6,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # Поднимаем базу данных Postgres
     services:
       db:
         image: postgres:15
@@ -38,7 +37,7 @@ jobs:
 
       - name: Run tests
         env:
-          # Эти переменные должны совпадать с теми, что в блоке services выше
+          # Принудительно задаем URL для тестов
           DATABASE_URL: postgresql+asyncpg://user:password@localhost:5432/test_db
           PYTHONPATH: ${{ github.workspace }}/backend
         run: |
