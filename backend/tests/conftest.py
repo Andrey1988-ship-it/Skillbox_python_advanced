@@ -1,3 +1,4 @@
+import os
 import pytest
 import asyncio
 from httpx import AsyncClient, ASGITransport
@@ -7,8 +8,11 @@ from app.main import app
 from app.core.database import get_db, Base
 from app.models.base import User
 
-# Используем основную БД, но с NullPool для стабильности в Docker
-TEST_DATABASE_URL = "postgresql+asyncpg://postgres:password@db:5432/microblog"
+# Проверяем переменную окружения, если её нет — берем локальный адрес по умолчанию
+TEST_DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql+asyncpg://postgres:password@db:5432/microblog"
+)
 
 # NullPool отключает кэширование соединений, что лечит InternalClientError
 engine_test = create_async_engine(TEST_DATABASE_URL, poolclass=NullPool)

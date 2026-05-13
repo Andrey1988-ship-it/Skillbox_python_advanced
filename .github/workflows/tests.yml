@@ -10,9 +10,9 @@ jobs:
       db:
         image: postgres:15
         env:
-          POSTGRES_USER: user
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: test_db
+          POSTGRES_DB: microblog
         ports:
           - 5432:5432
         options: >-
@@ -37,22 +37,9 @@ jobs:
 
       - name: Run tests
         env:
-          DATABASE_URL: postgresql+asyncpg://user:password@localhost:5432/test_db
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_USER: user
-          DB_PASSWORD: password
-          DB_NAME: test_db
+          # Передаем адрес базы через localhost, так как pytest запущен на хост-машине
+          DATABASE_URL: postgresql+asyncpg://postgres:password@localhost:5432/microblog
           PYTHONPATH: ${{ github.workspace }}/backend
         run: |
-          mkdir -p backend/static
-          
-          # Принудительно перезаписываем .env внутри backend, чтобы исключить старые настройки
-          echo "DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/test_db" > backend/.env
-          echo "DB_HOST=localhost" >> backend/.env
-          echo "DB_PORT=5432" >> backend/.env
-          echo "DB_USER=user" >> backend/.env
-          echo "DB_PASSWORD=password" >> backend/.env
-          echo "DB_NAME=test_db" >> backend/.env
-          
+          mkdir -p backend/static 
           cd backend && pytest
