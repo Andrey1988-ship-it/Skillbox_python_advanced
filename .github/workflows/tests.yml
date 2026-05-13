@@ -37,8 +37,20 @@ jobs:
 
       - name: Run tests
         env:
-          # Принудительно задаем URL для тестов
+          # Переменные для конфигурации через единый URL
           DATABASE_URL: postgresql+asyncpg://user:password@localhost:5432/test_db
+
+          # Раздельные переменные (переопределяют хост с 'db' на 'localhost')
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: user
+          DB_PASSWORD: password
+          DB_NAME: test_db
+
+          # Предотвращает чтение локального файла .env, если используется python-dotenv
+          PIPENV_DONT_LOAD_DOTENV: 1
+          DONT_LOAD_DOTENV: 1
+
           PYTHONPATH: ${{ github.workspace }}/backend
         run: |
           mkdir -p backend/static 
